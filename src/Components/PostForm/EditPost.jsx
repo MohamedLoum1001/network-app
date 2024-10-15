@@ -5,20 +5,28 @@ import { doc, updateDoc } from "firebase/firestore";
 
 const EditPost = () => {
   const location = useLocation();
-  const { post } = location.state; // Récupère le post passé en tant que state
-  const [title, setTitle] = useState(post?.title || "");
-  const [content, setContent] = useState(post?.content || "");
   const navigate = useNavigate();
 
+  // Vérifier si 'post' existe dans 'location.state'
+  const post = location.state?.post; 
+
+  // Redirection si 'post' n'est pas disponible
   useEffect(() => {
     if (!post) {
-      navigate("/"); // Redirige si aucun post n'est passé
+      alert("Aucun post sélectionné pour la modification.");
+      navigate("/"); // Redirige vers la page d'accueil ou une autre page
     }
   }, [post, navigate]);
 
+  // Utiliser les valeurs par défaut si 'post' est null
+  const [title, setTitle] = useState(post?.title || "");
+  const [content, setContent] = useState(post?.content || "");
+
   const handleUpdatePost = async (e) => {
     e.preventDefault();
-    
+
+    if (!post) return; // Sécurité supplémentaire si 'post' est nul
+
     const postRef = doc(db, "Posts", post.id);
 
     try {
@@ -27,11 +35,16 @@ const EditPost = () => {
         content,
       });
       alert("Post modifié avec succès !");
-      navigate("/dashboard");
+      navigate("/"); // Rediriger après la modification
     } catch (error) {
       console.error("Erreur lors de la mise à jour du post :", error);
     }
   };
+
+  // Affichage conditionnel pour éviter le rendu avant la récupération des données
+  if (!post) {
+    return null; // Ou un message de chargement/spinner peut être ajouté
+  }
 
   return (
     <div className="container">

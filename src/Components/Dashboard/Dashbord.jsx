@@ -55,7 +55,7 @@ const Dashboard = () => {
 
   const handleEditPost = (post) => {
     // Redirige vers la page du formulaire avec les détails du post
-    navigate("/add-post", { state: { post } });  // Passe le post comme état
+    navigate("/edit-post", { state: { post } });  // Passe le post comme état
   };
 
   const handleLikePost = async (postId) => {
